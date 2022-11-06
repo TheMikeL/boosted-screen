@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Icon, IconButton, Slider, Typography } from '@mui/material';
 import {
@@ -18,10 +18,77 @@ const DurationText = styled(Typography)({
   letterSpacing: 0.2,
 });
 
-const Controls = ({ duration }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isShuffle, setIsShuffle] = useState(false);
+const Controls = ({
+  currentSong,
+  shuffleSongs,
+  goToNextSong
+}) => {
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isShuffleOn, setIsShuffleOn] = useState(false);
+  const [isRepeatOn, setIsRepeatOn] = useState(false);
   const [position, setPosition] = useState(0);
+
+  const { duration } = currentSong;
+
+  const timeRef = useRef(null);
+
+  useEffect(() => {
+    if (!timeRef.current) {
+      timeRef.current = setInterval(() => {
+        setPosition((position) => position + 1);
+      }, 1000);
+    }
+  }, [timeRef]);
+
+  useEffect(() => {
+    if (position >= duration) {
+      clearInterval(timeRef.current);
+      if (isRepeatOn) {
+        repeatSong();
+      } else {
+        goToNextSong();
+      }
+    }
+  }, [position]);
+
+  useEffect(() => {
+    repeatSong();
+  }, [currentSong]);
+
+  const playSong = () => {
+    setIsPlaying(true);
+    timeRef.current = setInterval(() => {
+      setPosition((position) => position + 1);
+    }, 1000);
+  };
+
+  const handlePreviousClick = (event) => {
+    switch (event.detail) {
+      case 1: {
+        repeatSong();
+        break;
+      }
+      case 2: {
+        goToPreviousSong();
+        clearInterval(timeRef.current);
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  };
+
+  const pauseSong = () => {
+    setIsPlaying(false);
+    clearInterval(timeRef.current);
+  };
+
+  const repeatSong = () => {
+    setPosition(0);
+    clearInterval(timeRef.current);
+    playSong();
+  };
 
   return (
     <>
@@ -63,24 +130,29 @@ const Controls = ({ duration }) => {
         <DurationText>-{formatDuration(duration - position)}</DurationText>
       </div>
       <div className='flex justify-center'>
-        <IconButton onClick={() => setIsPlaying(!isPlaying)}>
-          <Icon color='default' component={Repeat} />
+        <IconButton onClick={() => setIsRepeatOn(!isRepeatOn)}>
+          <Icon color={isRepeatOn ? 'primary' : 'default'} component={Repeat} />
         </IconButton>
-        <IconButton onClick={() => setIsPlaying(!isPlaying)}>
+        <IconButton onClick={handlePreviousClick}>
           <Icon color='default' component={FirstPage} />
         </IconButton>{' '}
-        <IconButton onClick={() => setIsPlaying(!isPlaying)}>
-          {isPlaying ? (
+        {isPlaying ? (
+          <IconButton onClick={pauseSong}>
             <Icon color='default' fontSize='large' component={Pause} />
-          ) : (
+          </IconButton>
+        ) : (
+          <IconButton onClick={() => playSong()}>
             <Icon color='primary' fontSize='large' component={PlayArrow} />
-          )}
-        </IconButton>
-        <IconButton onClick={() => setIsPlaying(!isPlaying)}>
+          </IconButton>
+        )}
+        <IconButton onClick={() => goToNextSong()}>
           <Icon color='default' component={LastPage} />
         </IconButton>
-        <IconButton onClick={() => setIsShuffle(!isShuffle)}>
-          <Icon color={isShuffle ? 'primary' : 'default'} component={Shuffle} />
+        <IconButton onClick={() => setIsShuffleOn(!isShuffleOn)}>
+          <Icon
+            color={isShuffleOn ? 'primary' : 'default'}
+            component={Shuffle}
+          />
         </IconButton>
       </div>
     </>

@@ -3,7 +3,11 @@ import PlayerSong from '../components/PlayerSong';
 import Controls from '../components/Controls';
 import { Paper, Typography } from '@mui/material';
 
-const MusicPlayer = ({ currentSong }) => {
+const MusicPlayer = ({
+  currentSong,
+  goToNextSong,
+  goToPreviousSong
+}) => {
   return (
     <Paper
       elevated={0}
@@ -21,7 +25,11 @@ const MusicPlayer = ({ currentSong }) => {
       {currentSong ? (
         <>
           <PlayerSong currentSong={currentSong} />
-          <Controls duration={currentSong.duration} />
+          <Controls
+            currentSong={currentSong}
+            goToNextSong={goToNextSong}
+            goToPreviousSong={goToPreviousSong}
+          />
         </>
       ) : (
         <div className='text-center'>
