@@ -22,6 +22,7 @@ const PlayerSong = ({ currentSong }) => {
       <div className='block text-center whitespace-nowrap overflow-hidden overflow-ellipsis'>
         <Typography variant='h5'>{title}</Typography>
         <Typography variant='body1'>{artist}</Typography>
+        {/* TODO: Year was missing in the JSON */}
         <Typography variant='body2'>{year && year}</Typography>
       </div>
     </div>

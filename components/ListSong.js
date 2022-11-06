@@ -24,15 +24,15 @@ const ListSong = ({ song, setSongInfo, currentSong }) => {
           )}
         </div>
         <div className='w-40 text-right whitespace-nowrap overflow-hidden overflow-ellipsis md:w-64 lg:w-72'>
-          {/* TODO: I would prefer to use a song id for showing song selection: */}
-          {(
+          {/* TODO: I would prefer to use a song id for showing song selected to avoid possible duplicates*/}
+          {
             <Typography
               variant='subtitle1'
               color={currentSong?.title === title ? 'primary' : ''}
             >
               {title}
             </Typography>
-          )}
+          }
           <Typography variant='body2'>{artist}</Typography>
           <Typography variant='body2'>{year && year}</Typography>
         </div>

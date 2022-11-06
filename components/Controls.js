@@ -21,17 +21,19 @@ const DurationText = styled(Typography)({
 const Controls = ({
   currentSong,
   shuffleSongs,
-  goToNextSong
+  returnOriginalSongOrder,
+  goToNextSong,
+  goToPreviousSong,
 }) => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [isShuffleOn, setIsShuffleOn] = useState(false);
   const [isRepeatOn, setIsRepeatOn] = useState(false);
   const [position, setPosition] = useState(0);
+  const timeRef = useRef(null);
 
   const { duration } = currentSong;
 
-  const timeRef = useRef(null);
-
+  // Progressing timer logic for running the music
   useEffect(() => {
     if (!timeRef.current) {
       timeRef.current = setInterval(() => {
@@ -40,6 +42,7 @@ const Controls = ({
     }
   }, [timeRef]);
 
+  // Handling when the song ends
   useEffect(() => {
     if (position >= duration) {
       clearInterval(timeRef.current);
@@ -55,6 +58,14 @@ const Controls = ({
     repeatSong();
   }, [currentSong]);
 
+  useEffect(() => {
+    if (isShuffleOn) {
+      shuffleSongs();
+    } else {
+      returnOriginalSongOrder();
+    }
+  }, [isShuffleOn]);
+
   const playSong = () => {
     setIsPlaying(true);
     timeRef.current = setInterval(() => {
@@ -63,6 +74,7 @@ const Controls = ({
   };
 
   const handlePreviousClick = (event) => {
+    // Handling single and double click for previous button click
     switch (event.detail) {
       case 1: {
         repeatSong();
@@ -97,6 +109,7 @@ const Controls = ({
         size='small'
         aria-label='Seek slider'
         min={0}
+        value={position}
         step={1}
         max={duration}
         onChange={(_, value) => {
@@ -125,10 +138,12 @@ const Controls = ({
           },
         }}
       />
+
       <div className='relative flex w-full justify-between -top-2'>
         <DurationText>{formatDuration(position)}</DurationText>
         <DurationText>-{formatDuration(duration - position)}</DurationText>
       </div>
+
       <div className='flex justify-center'>
         <IconButton onClick={() => setIsRepeatOn(!isRepeatOn)}>
           <Icon color={isRepeatOn ? 'primary' : 'default'} component={Repeat} />
