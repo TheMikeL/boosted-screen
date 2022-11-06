@@ -6,7 +6,9 @@ import { Paper, Typography } from '@mui/material';
 const MusicPlayer = ({
   currentSong,
   goToNextSong,
-  goToPreviousSong
+  goToPreviousSong,
+  shuffleSongs,
+  returnOriginalSongOrder,
 }) => {
   return (
     <Paper
@@ -29,6 +31,8 @@ const MusicPlayer = ({
             currentSong={currentSong}
             goToNextSong={goToNextSong}
             goToPreviousSong={goToPreviousSong}
+            shuffleSongs={shuffleSongs}
+            returnOriginalSongOrder={returnOriginalSongOrder}
           />
         </>
       ) : (

@@ -20,7 +20,9 @@ const MusicList = ({ listOfSongs, setSongInfo, currentSong }) => {
       {listOfSongs.map((song, index) => {
         return (
           <ListSong
-            song={{...song, index}}
+            // TODO: would prefer song id for the key
+            key={index}
+            song={{ ...song, index }}
             setSongInfo={setSongInfo}
             currentSong={currentSong}
           />
